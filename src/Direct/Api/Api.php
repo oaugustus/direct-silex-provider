@@ -58,8 +58,7 @@ class Api
         } else {
             $this->api = $this->getCachedApi();
         }
-        
-        
+                
         return json_encode($this->api);        
     }  
     
@@ -115,16 +114,17 @@ class Api
 
         foreach ($bundles as $bundle => $controllers ) {
             $bundleShortName = str_replace('Bundle', '', $bundle);
-            
+                        
             foreach ($controllers as $controller) {
                 $api = new ControllerApi($controller);
 
                 if ($api->isExposed()) {
                     $actions[$bundleShortName."_".$api->getActionName()] = $api->getApi();
                 }
+                
             }
         }
-                
+                       
         return array(
             'url' => $this->app['request']->getBaseUrl().
                      $this->app['direct.route.pattern'],

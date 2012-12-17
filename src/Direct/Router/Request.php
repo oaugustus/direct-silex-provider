@@ -57,13 +57,13 @@ class Request
      * @param Symfony\Component\HttpFoundation\Request $request
      */
     public function __construct($request)
-    {        
+    {                
         // store the symfony request object
         $this->request = $request;
-        $this->rawPost = isset($GLOBALS['HTTP_RAW_POST_DATA']) ?  $GLOBALS['HTTP_RAW_POST_DATA'] : array();
+        $this->rawPost = isset($GLOBALS['HTTP_RAW_POST_DATA']) ?  $GLOBALS['HTTP_RAW_POST_DATA'] : '';
         $this->post = $_POST;
         $this->files = $_FILES;
-        $this->callType = !empty ($_POST) ? 'form' : 'batch';
+        $this->callType = isset($_POST['extAction']) ? 'form' : 'batch';
     }
 
     /**
@@ -108,10 +108,10 @@ class Request
     public function extractCalls()
     {
         $calls = array();
-
+        
         if ('form' == $this->callType) {
             $calls[] = new Call($this->post, 'form');
-        } else {            
+        } else {                        
             $decoded = json_decode($this->rawPost);
             $decoded = !is_array($decoded) ? array($decoded) : $decoded;
             

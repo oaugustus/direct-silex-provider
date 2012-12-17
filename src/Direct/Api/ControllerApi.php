@@ -44,11 +44,7 @@ class ControllerApi
      */
     public function __construct($controller)
     {
-        try {
-            $this->reflection = new \ReflectionClass($controller);
-        } catch (Exception $e) {
-            // @todo: throw an exception
-        }
+        $this->reflection = new \ReflectionClass($controller);                
         
         $this->api = $this->createApi();        
     }

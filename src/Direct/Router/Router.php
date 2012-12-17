@@ -51,11 +51,11 @@ class Router
     public function route()
     {
         $batch = array();
-        
+                
         foreach ($this->request->getCalls() as $call) {
             $batch[] = $this->dispatch($call);
         }
-
+        
         return $this->response->encode($batch);
     }
 
@@ -67,6 +67,7 @@ class Router
      */
     private function dispatch($call)
     {
+        
         $controller = $this->resolveController($call->getAction());
         $method = $call->getMethod()."Action";
 
@@ -122,7 +123,7 @@ class Router
 
             return $controller;
         } catch(Exception $e) {
-            // todo: handle exception
+            die($class);
         }
     }
 }

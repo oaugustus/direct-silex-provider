@@ -6,7 +6,16 @@ ExtDirect Extension to Silex Micro-framework.
 Installation
 ------------
  
-Through [Composer](http://getcomposer.org) as [oaugustus/silex-direct].
+Through [Composer](http://getcomposer.org):
+
+```php
+{
+   require: {
+       "oaugustus/silex-direct": "dev-master"
+   }
+        
+}
+``
 
 Usage
 -----

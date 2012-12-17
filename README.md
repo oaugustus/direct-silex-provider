@@ -12,8 +12,7 @@ Through [Composer](http://getcomposer.org):
 {
    require: {
        "oaugustus/silex-direct": "dev-master"
-   }
-        
+   }        
 }
 ```
 

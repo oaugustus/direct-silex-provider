@@ -27,6 +27,7 @@ $app->register(new DirectExtension(), array(
         'Neton' => __DIR__ // bundle namespace and the bundle directory location
     )
 ));
+```
 
 
 Create the controllers.
@@ -51,11 +52,13 @@ class EventController extends DirectController
         return sprintf('Hello %s', $params['name']);
     }
 }
+```
 
 Add the api call into your page templates:
 
 ```php
 <script type="text/javascript" src="{{url('directapi')}}"></script>
+```
 
 Ready, now call the remote method from ExtJS code:
 
@@ -64,4 +67,5 @@ Actions.Neton_Event.teste({name: 'Otavio'}, function(result, ev){
     if (ev.type != 'exception')
         console.log(result);
 });
+```
 

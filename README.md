@@ -1,4 +1,4 @@
 silex-direct
 ============
 
-ExtDirect Extension to Silex Micro-framework
+ExtDirect Extension to Silex Micro-framework.

@@ -1,0 +1,23 @@
+{
+  "name": "oaugustus/silex-direct",
+  "description": "ExtDirect extension to Silex Micro-framework",
+  "keywords": ["extjs","extdirect"],
+  "homepage": "http://github.com/oaugustus/silex-direct",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Otávio Fernandes",
+      "email": "otavio@netonsolucoes.com.br",
+      "homepage": "http://www.netonsolucoes.com.br"
+    }
+  ],
+  "require": {
+    "php": ">=5.3.0",
+    "silex/silex": "1.0.*",
+    "symfony/finder": "2.1.*"    
+  },
+  "autoload": {
+    "psr-0": {"Direct": "src/"}
+  }
+}

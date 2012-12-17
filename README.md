@@ -15,7 +15,7 @@ Through [Composer](http://getcomposer.org):
    }
         
 }
-``
+```
 
 Usage
 -----

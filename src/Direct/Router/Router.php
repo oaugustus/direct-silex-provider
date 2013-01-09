@@ -116,8 +116,8 @@ class Router
 
         try {
             $controller = new $class();
-
-            if ($controller instanceof \Direct\Controller\Controller) {
+            if (is_subclass_of($controller, '\\Direct\\Controller\\DirectController')) {
+                
                 $controller->setApplication($this->app);
             }
 

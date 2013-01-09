@@ -124,7 +124,7 @@ class Api
                 
             }
         }
-                       
+
         return array(
             'url' => $this->app['request']->getBaseUrl().
                      $this->app['direct.route.pattern'],

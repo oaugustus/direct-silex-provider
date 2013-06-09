@@ -31,7 +31,7 @@ class DirectServiceProvider implements ServiceProviderInterface
         // the direct api route
         $app->get('/api.js', function(Application $app){            
             return $app['direct.api']->getApi();
-        });
+        })->bind('directapi');
 
         // the direct api route remoting description
         $app->get('/remoting.js', function(Application $app){

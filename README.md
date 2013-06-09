@@ -1,7 +1,7 @@
 Silex-Direct
 ============
 
-ExtDirect Extension to Silex Micro-framework.
+An ExtDirect service provider for Silex.
 
 Installation
 ------------
@@ -11,7 +11,7 @@ Through [Composer](http://getcomposer.org):
 ```php
 {
    require: {
-       "oaugustus/silex-direct": "dev-master"
+       "oaugustus/direct-silex-provider": "dev-master"
    }        
 }
 ```
@@ -23,43 +23,32 @@ To get up and running, register `DirectExtension` and
 manually specify the bundles directories that will be the controllers exposed
 to ExtDirect.
 
-Register the DirectExtension;
+Register the DirectServiceProvider;
 
 ```php
 // app.php
-use Direct\DirectExtension;
-... 
+...
 
-$app->register(new DirectExtension(), array(    
-    'direct.bundles' => array(
-        'Neton' => __DIR__ // bundle namespace and the bundle directory location
-    )
-));
+$app->register(new Direct\DirectServiceProvider(), array());
 ```
 
 
-Create the controllers.
+Expose the controllers.
 
 ```php
-// Neton/Controller/EventController.php
-namespace Neton\Controller;
+// app.php
+...
 
-use Direct\Controller\DirectController;
+// method call without formHandler
+$app->post('/controller/method', function() use($app){
+    return $app["request"]->get("name");
+})->direct();
 
-class EventController extends DirectController
-{
-    /**
-     * Use the 'form' annotation to implement a direct call that supports form
-     * handlers and 'remote' annotation to exposes the method to Api.
-     * 
-     * @form
-     * @remote
-     */
-    public function testeAction($params, $files)
-    {        
-        return sprintf('Hello %s', $params['name']);
-    }
-}
+// method call with formHandler
+$app->post('/controller/secondMethod', function(){
+
+})->direct(true);
+
 ```
 
 Add the api call into your page templates:
@@ -71,7 +60,7 @@ Add the api call into your page templates:
 Ready, now call the remote method from ExtJS code:
 
 ```php
-Actions.Neton_Event.teste({name: 'Otavio'}, function(result, ev){
+Actions.Controller.method({name: 'Otavio'}, function(result, ev){
     if (ev.type != 'exception')
         console.log(result);
 });

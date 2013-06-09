@@ -26,7 +26,7 @@ class DirectServiceProvider implements ServiceProviderInterface
         };
 
         // redefine the Silex detault route class
-        $app['route_class'] = 'Direct\\Route';
+        $app['route_class'] = 'Direct\\Silex\\Route';
         
         // the direct api route
         $app->get('/api.js', function(Application $app){            

@@ -1,8 +1,8 @@
 <?php
 
-namespace Direct;
+namespace Direct\Silex;
 
-use Silex\Route as BaseRoute;
+use \Silex\Route as BaseRoute;
 
 /**
  * Extend the Silex\Route standard route class.

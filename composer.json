@@ -1,5 +1,5 @@
 {
-  "name": "oaugustus/silex-direct",
+  "name": "oaugustus/direct-silex-provider",
   "description": "An ExtJS Direct service provider for Silex.",
   "keywords": ["extjs","extdirect","silex"],
   "homepage": "http://github.com/oaugustus/silex-direct",

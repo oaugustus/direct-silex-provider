@@ -113,12 +113,18 @@ class Call
      */
     public function getResponse($result)
     {
+        $content = $result->getContent();
+
+        if ($result->headers->get('content-type') == 'application/json'){
+            $content = json_decode($result->getContent(),true);
+        }
+
         return array(
           'type' => 'rpc',
           'tid' => $this->tid,
           'action' => $this->action,
           'method' => $this->method,
-          'result' => $result
+          'result' => $content
         );
     }
     

@@ -1,5 +1,5 @@
 <?php
-namespace Direct\Api;
+namespace Direct;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -30,7 +30,7 @@ class Api
     /**
      * The Silex application framework.
      * 
-     * @var Silex\Application 
+     * @var \Silex\Application
      */
     protected $app = null;
     
@@ -43,7 +43,6 @@ class Api
     public function __construct($app)
     {
         $this->app = $app;
-        $this->bundles = $app['direct.bundles'];
     }
 
     /**
@@ -87,6 +86,24 @@ class Api
         
         return $response;
     }
+
+    /**
+     * Get the ExtDirect Api response Remoting descriptor.
+     *
+     * @return string;
+     */
+    public function getRemoting()
+    {
+        $apiStr = sprintf("Ext.app.REMOTING_API =%s;", $this);
+
+        $response = new Response($apiStr);
+
+        // set the response header
+        $response->headers->set('Content-Type', 'text/javascript');
+
+        // return the response
+        return $response;
+    }
     
     
     /**
@@ -108,22 +125,9 @@ class Api
      */
     private function createApi()
     {
-        $bundles = $this->getControllers();
+        $routes = $this->app["routes"];
 
-        $actions = array();        
-
-        foreach ($bundles as $bundle => $controllers ) {
-            $bundleShortName = str_replace('Bundle', '', $bundle);
-                        
-            foreach ($controllers as $controller) {
-                $api = new ControllerApi($controller);
-
-                if ($api->isExposed()) {
-                    $actions[$bundleShortName."_".$api->getActionName()] = $api->getApi();
-                }
-                
-            }
-        }
+        $actions = $this->getRouteActions($routes);
 
         return array(
             'url' => $this->app['request']->getBaseUrl().
@@ -147,27 +151,75 @@ class Api
     }
 
     /**
-     * Get all controllers from all bundles.
+     * Get the route API definition
      *
+     * @param array
      * @return array Controllers list
      */
-    protected function getControllers()
+    protected function getRouteActions($routes)
     {
-        $controllers = array();
-        $finder = new ControllerFinder();
-        
-        // get each controller from a bundle
-        foreach ($this->bundles as $bundle => $path) {
-            
-            $found = $finder->getControllers($bundle, $path);
-            
-            // if any controller exist in the bundle
-            if (!empty ($found)) {
-                // store this controller
-                $controllers[$bundle] = $found;
+        $actions = array();
+
+        // iterate for all routes
+        foreach ($routes->all() as $route){
+
+            // if route is direct exposed
+            if ($route->isDirect()){
+                $apiParts = $this->getRouteApiParts($route);
+
+                if ($apiParts['exposed']){
+                    $path = $apiParts['path'];
+                    unset($apiParts['path']);
+                    unset($apiParts['exposed']);
+
+                    $actions[$path][] = $apiParts;
+                }
             }
+
         }
 
-        return $controllers;
-    }    
+        return $actions;
+    }
+
+    /**
+     * Return the route extdirect api parts.
+     *
+     * @param $route
+     * @return mixed
+     */
+    protected function getRouteApiParts($route)
+    {
+        $name = explode('/', $route->getPattern());
+
+        $parts = array(
+            'exposed' => false
+        );
+
+        // if the name has more than one string pattern
+        if (count($name) > 2){
+            // get the method name
+            $method = array_pop($name);
+
+            // upcase the namespace names
+            array_walk($name, function(&$n){
+                $n = ucfirst($n);
+            });
+
+            $path = implode('', $name);
+
+            $parts = array(
+                'path' => $path,
+                'exposed' => true,
+                'name' => $method,
+                'len' => 1
+            );
+
+            if ($route->isFormDirect()){
+                $parts['formHandler'] = true;
+            }
+
+        }
+
+        return $parts;
+    }
 }

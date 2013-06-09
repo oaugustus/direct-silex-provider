@@ -1,6 +1,11 @@
 <?php
-namespace Direct\Router;
+namespace Direct;
 
+use Direct\Router\Request as DirectRequest;
+use Direct\Router\Response;
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 /**
  * Router is the ExtDirect Router class.
  *
@@ -13,33 +18,33 @@ class Router
     /**
      * The ExtDirect Request object.
      * 
-     * @var Direct\Request
+     * @var \Direct\Request
      */
     protected $request;
     
     /**
      * The ExtDirect Response object.
      * 
-     * @var Direct\Response
+     * @var \Direct\Response
      */
     protected $response;
     
     /**
      * The Silex application framework.
      * 
-     * @var Silex\Application 
+     * @var \Silex\Application
      */
     protected $app = null;
     
     /**
      * Initialize the router object.
      * 
-     * @param Silex\Application $app
+     * @param \Silex\Application $app
      */
     public function __construct($app)
     {
         $this->app = $app;
-        $this->request = new Request($app['request']);
+        $this->request = new DirectRequest($app['request']);
         $this->response = new Response($this->request->getCallType());
     }
         
@@ -55,32 +60,39 @@ class Router
         foreach ($this->request->getCalls() as $call) {
             $batch[] = $this->dispatch($call);
         }
-        
+
         return $this->response->encode($batch);
     }
 
     /**
      * Dispatch a remote method call.
      * 
-     * @param  Neton\DirectBundle\Router\Call $call
+     * @param  \Direct\Router\Call $call
      * @return Mixed
      */
     private function dispatch($call)
     {
-        
-        $controller = $this->resolveController($call->getAction());
-        $method = $call->getMethod()."Action";
 
-        if (!is_callable(array($controller, $method))) {
-            //todo: throw an execption method not callable
-        }
+        $path = $call->getAction();
+        $method = $call->getMethod();
+
+        $matches = preg_split('/(?=[A-Z])/',$path);
+        $route = strtolower(implode('/', $matches));
+        $route .= "/".$method;
+
+        $request = $this->app['request'];
+
+        // create the route request
+        $routeRequest = Request::create($route, 'POST', $call->getData(), $request->cookies->all(), $request->files->all(), $request->server->all());
 
         if ('form' == $this->request->getCallType()) {
-            $result = $controller->$method($call->getData(), $this->request->getFiles());
+            $result = $this->app->handle($routeRequest, HttpKernelInterface::SUB_REQUEST);
+
             $response = $call->getResponse($result);
         } else {
             try{
-                $result = $controller->$method($call->getData());
+                $result = $this->app->handle($routeRequest, HttpKernelInterface::SUB_REQUEST);
+
                 $response = $call->getResponse($result);
             }catch(\Exception $e){
                 $response = $call->getException($e);
@@ -100,30 +112,4 @@ class Router
         return $this->request->getCallType();
     }
     
-    /**
-     * Resolve the called controller from action.
-     * 
-     * @param  string $action
-     * @return <type>
-     */
-    private function resolveController($action)
-    {
-        list($bundleName, $controllerName) = explode('_',$action);
-        
-        $namespace = $bundleName."\\Controller";
-
-        $class = $namespace."\\".$controllerName."Controller";
-
-        try {
-            $controller = new $class();
-            if (is_subclass_of($controller, '\\Direct\\Controller\\DirectController')) {
-                
-                $controller->setApplication($this->app);
-            }
-
-            return $controller;
-        } catch(Exception $e) {
-            die($class);
-        }
-    }
 }

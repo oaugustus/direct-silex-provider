@@ -3,14 +3,13 @@ namespace Direct;
 
 use Silex\Application;
 use Silex\ServiceProviderInterface;
-use Direct\Api\Api;
-use Direct\Router\Router;
-use Symfony\Component\HttpFoundation\Response;
+use Direct\Api;
+use Direct\Router;
 
-class DirectExtension implements ServiceProviderInterface
+class DirectServiceProvider implements ServiceProviderInterface
 {
     /**
-     * Register the Extension parameters and services.
+     * Register the service provider.
      * 
      * @param Application $app
      */
@@ -25,11 +24,19 @@ class DirectExtension implements ServiceProviderInterface
         $app['direct.router'] = function() use ($app){
             return new Router($app);
         };
+
+        // redefine the Silex detault route class
+        $app['route_class'] = 'Direct\\Route';
         
         // the direct api route
         $app->get('/api.js', function(Application $app){            
             return $app['direct.api']->getApi();
-        })->bind('directapi');
+        });
+
+        // the direct api route remoting description
+        $app->get('/remoting.js', function(Application $app){
+            return $app['direct.api']->getRemoting();
+        });
         
         // the direct router route
         $app->post('/route', function(Application $app){

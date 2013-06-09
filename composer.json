@@ -1,7 +1,7 @@
 {
   "name": "oaugustus/silex-direct",
-  "description": "ExtDirect extension to Silex Micro-framework",
-  "keywords": ["extjs","extdirect"],
+  "description": "An ExtJS Direct service provider for Silex.",
+  "keywords": ["extjs","extdirect","silex"],
   "homepage": "http://github.com/oaugustus/silex-direct",
   "type": "library",
   "license": "MIT",
@@ -14,8 +14,7 @@
   ],
   "require": {
     "php": ">=5.3.3",
-    "silex/silex": "1.0.*",
-    "symfony/finder": "2.1.*"    
+    "silex/silex": "1.0.*"
   },
   "minimum-stability": "dev",  
   "autoload": {

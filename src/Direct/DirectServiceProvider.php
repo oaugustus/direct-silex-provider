@@ -27,9 +27,26 @@ class DirectServiceProvider implements ServiceProviderInterface
 
         // redefine the Silex detault route class
         $app['route_class'] = 'Direct\\Silex\\Route';
-        
+
+        // default configs
+        $app['direct.bundles'] = isset($app['direct.bundles']) ? $app['direct.bundles'] : array();
+        $app['direct.route.pattern'] = isset($app['direct.route.pattern']) ? $app['direct.route.pattern'] : '/route';
+        $app['direct.api.type'] = isset($app['direct.api.type']) ? $app['direct.api.type'] : 'remoting';
+        $app['direct.api.namespace'] = isset($app['direct.api.namespace']) ? $app['direct.api.namespace'] : 'Actions';
+        $app['direct.api.id'] = isset($app['direct.api.id']) ? $app['direct.api.id'] : 'API';
+        $app['direct.exception.message'] = isset($app['direct.exception.message']) ? $app['direct.exception.message'] : 'Whoops, looks like something went wrong.';
+
+    }
+
+    /**
+     * Setup the application.
+     * 
+     * @param Application $app 
+     */
+    public function boot(Application $app)
+    {
         // the direct api route
-        $app->get('/api.js', function(Application $app){            
+        $app->get('/api.js', function(Application $app){
             return $app['direct.api']->getApi();
         })->bind('directapi');
 
@@ -37,27 +54,11 @@ class DirectServiceProvider implements ServiceProviderInterface
         $app->get('/remoting.js', function(Application $app){
             return $app['direct.api']->getRemoting();
         });
-        
+
         // the direct router route
         $app->post('/route', function(Application $app){
-            // handle the route 
+            // handle the route
             return $app['direct.router']->route();
-        });        
+        });
     }
-
-    /**
-     * Setup the extension.
-     * 
-     * @param Application $app 
-     */
-    public function boot(Application $app)
-    {
-        // default configs
-        $app['direct.bundles'] = isset($app['direct.bundles']) ? $app['direct.bundles'] : array();
-        $app['direct.route.pattern'] = isset($app['direct.route.pattern']) ? $app['direct.route.pattern'] : '/route';
-        $app['direct.api.type'] = isset($app['direct.api.type']) ? $app['direct.api.type'] : 'remoting';            
-        $app['direct.api.namespace'] = isset($app['direct.api.namespace']) ? $app['direct.api.namespace'] : 'Actions';
-        $app['direct.api.id'] = isset($app['direct.api.id']) ? $app['direct.api.id'] : 'API';                    
-        $app['direct.exception.message'] = isset($app['direct.exception.message']) ? $app['direct.exception.message'] : 'Whoops, looks like something went wrong.';
-    }    
 }

@@ -163,8 +163,8 @@ class Api
         // iterate for all routes
         foreach ($routes->all() as $route){
 
-            // if route is direct exposed
-            if ($route->isDirect()){
+            // if route is post and is direct exposed
+            if (in_array('POST', $route->getMethods()) == true && $route->isDirect()){
                 $apiParts = $this->getRouteApiParts($route);
 
                 if ($apiParts['exposed']){

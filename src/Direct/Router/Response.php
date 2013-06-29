@@ -20,11 +20,13 @@ class Response
     /**
      * Initialize the object setting it type.
      * 
-     * @param string $type
+     * @param String $type
+     * @param Boolean $responseEncode
      */
-    public function __construct($type)
+    public function __construct($type, $responseEncode)
     {
         $this->type = $type;
+        $this->responseEncode = $responseEncode;
     }
 
     /**
@@ -43,9 +45,11 @@ class Response
             
             return $response;
         } else {
-            // @todo: check utf8 config option from bundle
-            array_walk_recursive($result, array($this, 'utf8'));
-            
+            if ($this->responseEncode){
+                // @todo: check utf8 config option from bundle
+                array_walk_recursive($result, array($this, 'utf8'));
+            }
+
             $response = new SfResponse(json_encode($result));            
             $response->headers->set('Content-Type', 'application/json');
             

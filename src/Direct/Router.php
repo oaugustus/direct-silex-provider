@@ -45,7 +45,7 @@ class Router
     {
         $this->app = $app;
         $this->request = new DirectRequest($app['request']);
-        $this->response = new Response($this->request->getCallType());
+        $this->response = new Response($this->request->getCallType(), $app['direct.responseEncode']);
     }
         
     /**

@@ -54,12 +54,14 @@ class Request
     /**
      * Initialize the object.
      * 
-     * @param Symfony\Component\HttpFoundation\Request $request
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param Boolean                                   $requestDecode
      */
-    public function __construct($request)
+    public function __construct($request, $requestDecode)
     {                
         // store the symfony request object
         $this->request = $request;
+        $this->requestDecode = $requestDecode;
         $this->rawPost = isset($GLOBALS['HTTP_RAW_POST_DATA']) ?  $GLOBALS['HTTP_RAW_POST_DATA'] : '';
         $this->post = $_POST;
         $this->files = $_FILES;
@@ -116,8 +118,9 @@ class Request
             $decoded = !is_array($decoded) ? array($decoded) : $decoded;
             
             array_walk_recursive($decoded, array($this, 'parseRawToArray'));
-            // @todo: check utf8 config option from bundle
-            array_walk_recursive($decoded, array($this, 'decode'));
+
+            if ($this->requestDecode)
+                array_walk_recursive($decoded, array($this, 'decode'));
 
             foreach ($decoded as $call) {
                 $calls[] = new Call((array)$call, 'single');

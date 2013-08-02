@@ -44,7 +44,7 @@ class Router
     public function __construct($app)
     {
         $this->app = $app;
-        $this->request = new DirectRequest($app['request']);
+        $this->request = new DirectRequest($app['request'], $app['direct.requestDecode']);
         $this->response = new Response($this->request->getCallType(), $app['direct.responseEncode']);
     }
         

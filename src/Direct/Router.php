@@ -82,8 +82,10 @@ class Router
 
         $request = $this->app['request'];
 
+        $files = $this->fixFiles($request->files->all());
+
         // create the route request
-        $routeRequest = Request::create($route, 'POST', $call->getData(), $request->cookies->all(), $request->files->all(), $request->server->all());
+        $routeRequest = Request::create($route, 'POST', $call->getData(), $request->cookies->all(), $files, $request->server->all());
 
         if ('form' == $this->request->getCallType()) {
             $result = $this->app->handle($routeRequest, HttpKernelInterface::SUB_REQUEST);
@@ -100,6 +102,26 @@ class Router
         }
 
         return $response;
+    }
+
+    /**
+     * Fixa o problema de arquivos de upload não enviados.
+     *
+     * @param Array $inputFiles
+     *
+     * @return Array
+     */
+    private function fixFiles($inputFiles)
+    {
+        $files = array();
+
+        foreach ($inputFiles as $file) {
+            if (!$file instanceof \Symfony\Component\HttpFoundation\File\UploadedFile ){
+                $files[] = array();
+            } else {
+                $files[] = $file;
+            }
+        }
     }
 
     /**

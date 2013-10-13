@@ -122,6 +122,8 @@ class Router
                 $files[] = $file;
             }
         }
+
+        return $files;
     }
 
     /**

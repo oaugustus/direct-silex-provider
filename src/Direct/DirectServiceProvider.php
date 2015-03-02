@@ -30,7 +30,7 @@ class DirectServiceProvider implements ServiceProviderInterface
 
         // default configs
         $app['direct.bundles'] = isset($app['direct.bundles']) ? $app['direct.bundles'] : array();
-        $app['direct.responseEncode'] = true;
+        $app['direct.responseEncode'] = isset($app['direct.responseEncode']) ? $app['direct.responseEncode'] : true;
         $app['direct.requestDecode'] = true;
         $app['direct.route.pattern'] = isset($app['direct.route.pattern']) ? $app['direct.route.pattern'] : '/route';
         $app['direct.api.type'] = isset($app['direct.api.type']) ? $app['direct.api.type'] : 'remoting';
